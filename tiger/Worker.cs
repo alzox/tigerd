@@ -51,9 +51,11 @@ public class Worker : BackgroundService
             }
         }
     }
+    private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public async void SendEmail(string subject, string body, string to)
     {
+        await _semaphore.WaitAsync();
         try
         {
             var fromMailAddress = new MailAddress("henrygao00@gmail.com", "tiger");
@@ -68,6 +70,10 @@ public class Worker : BackgroundService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending email.");
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 }
