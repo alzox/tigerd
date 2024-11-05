@@ -24,6 +24,7 @@ public class Worker : BackgroundService
 	}
         ProccessDict proccessDict = new ProccessDict(_logger);
         proccessDict.Initialize();
+	MessageJson messages = new MessageJson(_logger, _args[0]);
         while (!stoppingToken.IsCancellationRequested)
         {
             proccessDict.Update();

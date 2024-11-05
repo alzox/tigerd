@@ -1,6 +1,14 @@
-{
+[
 	{
-		"subject": "kaboom"
+		"subject": "kaboom",
+		"body": "the world is exploding!"
+	},
+	{
+		"subject": "kaboom",
+		"body": "the world is exploding!"
+	},
+	{
+		"subject": "kaboom",
 		"body": "the world is exploding!"
 	}
-}
+]
