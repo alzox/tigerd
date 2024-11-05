@@ -13,7 +13,7 @@ try
 {
     Log.Information("Starting up");
 
-    // Window SCM service
+    // SMTP settings
     string contextPath = AppContext.BaseDirectory;
     int index = contextPath.IndexOf("tiger\\");
     string tigerPath = contextPath.Substring(0, index + 6);
@@ -21,8 +21,6 @@ try
     .SetBasePath(tigerPath)
     .AddJsonFile("config", optional: false, reloadOnChange: true)
     .Build();
-
-    // SMTP settings
     IConfigurationSection smtpSettings = configuration.GetSection("SmtpSettings");
     string smtpServer = smtpSettings["Server"];
     int smtpPort = int.Parse(smtpSettings["Port"]);
