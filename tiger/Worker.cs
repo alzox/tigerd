@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Net.Mail;
+using tiger.helpers;
 
 namespace tiger;
 
@@ -16,25 +17,29 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        int count = 0;
+        ProccessDict proccessDict = new ProccessDict(_logger);
+        proccessDict.Initialize();
         while (!stoppingToken.IsCancellationRequested)
         {
-            bool isDiscordRunning = Process.GetProcessesByName("Discord").Any();
-            await Task.Delay(60000, stoppingToken);                
-             if (isDiscordRunning)
-            {
-                count++;
-                _logger.LogInformation($"Discord is running. Count: {count}");
-            }
-            else
-            {
-                _logger.LogWarning("Discord is not running.");
-            }            
-            if (count == 2) {
-                SendEmail("Discord is running", "Discord is running on your computer.", "djx3rn@virginia.edu");
-                count = 0;
-            }
+            proccessDict.Update();
+            CheckProcessesPlaytime(proccessDict.GetDict());
+            await Task.Delay(60000, stoppingToken);
+        }
+    }
 
+    public void CheckProcessesPlaytime(Dictionary<string, TimeSpan> processesDict)
+    {
+        foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
+        {
+            string processName = entry.Key;
+            TimeSpan timeElapsed = entry.Value;
+            if (timeElapsed.TotalMinutes > 5)
+            {
+                string subject = "wee woo wee woo";
+                string body = "The process " + processName + " has been running for more than 5 minutes. Please check it.";
+                string to = "djx3rn@virginia.edu";
+                SendEmail(subject, body, to);
+            }
         }
     }
 

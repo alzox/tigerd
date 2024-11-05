@@ -1,12 +1,14 @@
 using System.Diagnostics;
-namespace Tiger.Helper
+namespace tiger.helpers
 
 {
     public class ProccessDict
     {
-        public Dictionary<string, int> processes = new Dictionary<string, int>();
-        public ProccessDict()
-        {   
+        public Dictionary<string, TimeSpan> processesDict = new Dictionary<string, TimeSpan>();
+        private readonly ILogger _logger;
+        public ProccessDict(ILogger logger)
+        {
+            _logger = logger;
             string contextPath = AppContext.BaseDirectory;
             int index = contextPath.IndexOf("tiger\\");
             string tigerPath = contextPath.Substring(0, index + 6);
@@ -15,27 +17,78 @@ namespace Tiger.Helper
             foreach (string line in lines)
             {
                 string[] parts = line.Split(',');
-                processes.Add(parts[0], 0);
+                processesDict.Add(parts[0], new TimeSpan(0));
+                _logger.LogInformation("Process " + parts[0] + " added to dictionary.");
             }
         }
 
-        public void Update()
+        public void Initialize()
         {
-            foreach (KeyValuePair<string, int> entry in processes)
+            foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
             {
                 string processName = entry.Key;
-                int count = entry.Value;
-                bool isRunning = Process.GetProcessesByName(processName).Any();
-                if (isRunning)
+                Process[] processes = Process.GetProcessesByName(processName);
+                TimeSpan curTimeElapsed = new TimeSpan(0);
+                foreach (Process process in processes)
                 {
-                    count++;
-                    processes[processName] = count;
+                    DateTime startTime = process.StartTime;
+                    DateTime currentTime = DateTime.Now;
+                    TimeSpan timeSpan = currentTime - startTime;
+                    if (timeSpan > curTimeElapsed)
+                    {
+                        curTimeElapsed = timeSpan;
+                    }
                 }
-                else
+                processesDict[processName] = curTimeElapsed;
+            }
+            _logger.LogInformation("Processes initialized.");
+        }
+
+        public void Update(){
+            PrintDict();
+            foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
+            {
+                string processName = entry.Key;
+                Process[] processes = Process.GetProcessesByName(processName);
+                TimeSpan curTimeElapsed = new TimeSpan(0);
+                foreach (Process process in processes)
                 {
-                    processes[processName] = 0;
+                    DateTime startTime = process.StartTime;
+                    DateTime currentTime = DateTime.Now;
+                    TimeSpan timeSpan = currentTime - startTime;
+                    if (timeSpan > curTimeElapsed)
+                    {
+                        curTimeElapsed = timeSpan;
+                    }
+                }
+                if (curTimeElapsed > processesDict[processName])
+                {
+                    processesDict[processName] = curTimeElapsed;
+                }
+                else if (curTimeElapsed < processesDict[processName])
+                {
+                    _logger.LogInformation("Process " + processName + " has been restarted.");
+                    _logger.LogInformation("Time elapsed previously: " + processesDict[processName]);
+                    _logger.LogInformation("Time elapsed now: " + curTimeElapsed);
+
+                    processesDict[processName] = curTimeElapsed;
                 }
             }
+        }
+
+        public void PrintDict()
+        {
+            foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
+            {
+                string processName = entry.Key;
+                TimeSpan timeElapsed = entry.Value;
+                _logger.LogInformation("Process: " + processName + " Time elapsed: " + timeElapsed);
+            }
+        }
+
+        public Dictionary<string, TimeSpan> GetDict()
+        {
+            return processesDict;
         }
 
     }
