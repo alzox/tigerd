@@ -44,7 +44,9 @@ public class Worker : BackgroundService
     {
         try
         {
-            var mailMessage = new MailMessage("henrygao00@gmail.com", to)
+            var fromMailAddress = new MailAddress("henrygao00@gmail.com", "tiger");
+            var toMailAddress = new MailAddress(to);
+            var mailMessage = new MailMessage(fromMailAddress, toMailAddress)
             {
                 Subject = subject,
                 Body = body

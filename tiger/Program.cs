@@ -11,12 +11,14 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     Log.Information("Starting up");
-    Log.Information($"AppContext.BaseDirectory: {AppContext.BaseDirectory}");
 
-    // Load configuration from config file
+    // Load configuration from config file ! Only for Windows Service
+    string contextPath = AppContext.BaseDirectory;
+    int index = contextPath.IndexOf("tiger\\");
+    string tigerPath = contextPath.Substring(0, index + 6);
     var configuration = new ConfigurationBuilder()
-    .SetBasePath(AppContext.BaseDirectory)
-    .AddJsonFile("C:/Users/commo/OneDrive - University of Virginia/School/STEM/CS/Coding Projects 2024/tiger-daemon/tiger/config", optional: false, reloadOnChange: true)
+    .SetBasePath(tigerPath)
+    .AddJsonFile("config", optional: false, reloadOnChange: true)
     .Build();
 
     IConfigurationSection smtpSettings = configuration.GetSection("SmtpSettings");
