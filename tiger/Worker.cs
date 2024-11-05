@@ -32,7 +32,7 @@ public class Worker : BackgroundService
         {
             proccessDict.Update();
             CheckProcessesPlaytime(proccessDict.GetDict());
-            await Task.Delay(1800000, stoppingToken);
+            await Task.Delay(900000, stoppingToken);
         }
     }
 
@@ -42,7 +42,7 @@ public class Worker : BackgroundService
         {
             string processName = entry.Key;
             TimeSpan timeElapsed = entry.Value;
-            if (timeElapsed.TotalMinutes > 1)
+            if (timeElapsed.TotalMinutes > 30)
             {
                 string subject = "wee woo wee woo";
 		string body = "hey, get off " + processName;
