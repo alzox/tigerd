@@ -2,11 +2,28 @@ using Serilog;
 using tiger;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using System.Net.Mail;
+using System.Runtime.InteropServices;
+
+// Some Logic to change paths depending on the OS 
+string writeToLocation = "";
+string contextPath = AppContext.BaseDirectory;
+int index = contextPath.IndexOf("tiger\\");
+ 
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+	writeToLocation = "C:/ProgramData/tiger-daemon/logs.txt";
+	int index = contextPath.IndexOf("tiger\\");
+}
+else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux){
+	writeToLocation = "/var/log/tiger-daemon/logs.txt";
+	int index = contextPath.IndexOf("tiger/");
+}
+
+string tigerPath = contextPath.Substring(0, index + 6);
 
 // Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("C:/ProgramData/tiger-daemon/logs.txt", rollingInterval: RollingInterval.Day) // Add this line to write logs to a file
+    .WriteTo.File(writeToLocation, rollingInterval: RollingInterval.Day) // Add this line to write logs to a file
     .CreateLogger();
 
 try
@@ -14,10 +31,7 @@ try
     Log.Information("Starting up");
 
     // SMTP settings
-    string contextPath = AppContext.BaseDirectory;
-    int index = contextPath.IndexOf("tiger\\");
-    string tigerPath = contextPath.Substring(0, index + 6);
-    var configuration = new ConfigurationBuilder()
+   var configuration = new ConfigurationBuilder()
     .SetBasePath(tigerPath)
     .AddJsonFile("config", optional: false, reloadOnChange: true)
     .Build();
@@ -32,16 +46,26 @@ try
     smtpClient.EnableSsl = true;
 
     // "App" builder
-    IHost host = Host.CreateDefaultBuilder(args)
+    IHostBuilder hostBuidler = Host.CreateDefaultBuilder(args)
         .UseSerilog() // Add this line to use Serilog
-        .UseWindowsService() // Add this line to integrate with Windows Service
         .ConfigureServices(services =>
         {
             services.AddSingleton(smtpClient);
             services.AddHostedService<Worker>();
-        })
-        .Build();
+        });
 
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    {
+        hostBuilder = hostBuilder.UseWindowsService();
+        Log.Information("Running as Windows Service");
+    }
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+        hostBuilder = hostBuilder.UseSystemd();
+        Log.Information("Running as Linux Daemon");
+    }
+
+    IHost host = host.Build();
     host.Run();
 }
 catch (Exception ex)
