@@ -19,7 +19,8 @@ https://github.com/You-Gao/tiger-daemon.git
 ## Usage
 1. cd tiger 
 2. add config with SMTP login info:
-'''
+   
+```
 {
   "SmtpSettings": {
     "Server": "smtp.gmail.com",
@@ -29,7 +30,8 @@ https://github.com/You-Gao/tiger-daemon.git
   }
 }
 
-'''
+```
+
 3. edit processes.txt
 4. dotnet build
 5. dotnet run
