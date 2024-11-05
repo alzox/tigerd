@@ -8,15 +8,20 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly SmtpClient _smtpClient;
+    private readonly string[] _args;
 
-    public Worker(ILogger<Worker> logger, SmtpClient smtpClient)
+    public Worker(ILogger<Worker> logger, SmtpClient smtpClient, string[] args)
     {
         _logger = logger;
         _smtpClient = smtpClient;
+	_args = args;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+	foreach (string arg in _args){
+		_logger.LogInformation(arg);
+	}
         ProccessDict proccessDict = new ProccessDict(_logger);
         proccessDict.Initialize();
         while (!stoppingToken.IsCancellationRequested)
