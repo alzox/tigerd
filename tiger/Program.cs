@@ -53,6 +53,7 @@ try
         .ConfigureServices(services =>
         {
             services.AddSingleton(smtpClient);
+	    services.AddSingleton(args);
             services.AddHostedService<Worker>();
         });
 

@@ -8,22 +8,31 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly SmtpClient _smtpClient;
+    private readonly string[] _args;
 
-    public Worker(ILogger<Worker> logger, SmtpClient smtpClient)
+    public Worker(ILogger<Worker> logger, SmtpClient smtpClient, string[] args)
     {
         _logger = logger;
         _smtpClient = smtpClient;
+	_args = args;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+	foreach (string arg in _args){
+		_logger.LogInformation(arg);
+	}
         ProccessDict proccessDict = new ProccessDict(_logger);
         proccessDict.Initialize();
+
+	if (_args.Length > 0) {
+		MessageJson messages = new MessageJson(_logger, _args[0]);
+	}
         while (!stoppingToken.IsCancellationRequested)
         {
             proccessDict.Update();
             CheckProcessesPlaytime(proccessDict.GetDict());
-            await Task.Delay(60000, stoppingToken);
+            await Task.Delay(1800000, stoppingToken);
         }
     }
 
@@ -33,10 +42,10 @@ public class Worker : BackgroundService
         {
             string processName = entry.Key;
             TimeSpan timeElapsed = entry.Value;
-            if (timeElapsed.TotalMinutes > 5)
+            if (timeElapsed.TotalMinutes > 30)
             {
                 string subject = "wee woo wee woo";
-                string body = "The process " + processName + " has been running for more than 5 minutes. Please check it.";
+		string body = "hey, get off " + processName;
                 string to = "djx3rn@virginia.edu";
                 SendEmail(subject, body, to);
             }
