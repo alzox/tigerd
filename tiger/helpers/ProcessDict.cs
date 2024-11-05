@@ -14,17 +14,7 @@ namespace tiger.helpers
         public ProccessDict(ILogger logger)
         {
             _logger = logger;
-            string contextPath = AppContext.BaseDirectory;
-            int index = contextPath.IndexOf("tiger\\");
-
-	    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
-		index = contextPath.IndexOf("tiger\\");
-	    }
-	    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)){
-		index = contextPath.IndexOf("tiger/");
-	    }
-
-	    string tigerPath = contextPath.Substring(0, index + 6);
+	        string tigerPath = PlatformConfig.GetTigerPath();
             string processTxt = tigerPath + "processes.txt";
             string[] lines = File.ReadAllLines(processTxt);
             foreach (string line in lines)

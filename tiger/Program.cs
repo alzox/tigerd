@@ -1,26 +1,12 @@
 using Serilog;
 using tiger;
-using Microsoft.Extensions.Hosting.WindowsServices;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Hosting.Systemd;
+using tiger.helpers;
 
 // Some Logic to change paths depending on the OS 
-string writeToLocation = "";
-string contextPath = AppContext.BaseDirectory;
-int index = contextPath.IndexOf("tiger\\");
- 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
-	writeToLocation = "C:/ProgramData/tiger-daemon/logs.txt";
-	index = contextPath.IndexOf("tiger\\");
-}
-else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)){
-	writeToLocation = "/var/log/tiger-daemon/logs.txt";
-	index = contextPath.IndexOf("tiger/");
-}
-
-string tigerPath = contextPath.Substring(0, index + 6);
+string writeToLocation = PlatformConfig.GetWriteToLocation();
+string tigerPath = PlatformConfig.GetTigerPath();
 
 // Serilog
 Log.Logger = new LoggerConfiguration()

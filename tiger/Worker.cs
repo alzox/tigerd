@@ -14,7 +14,7 @@ public class Worker : BackgroundService
     {
         _logger = logger;
         _smtpClient = smtpClient;
-	_args = args;
+	    _args = args;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,7 +42,7 @@ public class Worker : BackgroundService
         {
             string processName = entry.Key;
             TimeSpan timeElapsed = entry.Value;
-            if (timeElapsed.TotalMinutes > 30)
+            if (timeElapsed.TotalMinutes > 1)
             {
                 string subject = "wee woo wee woo";
 		string body = "hey, get off " + processName;
@@ -58,7 +58,7 @@ public class Worker : BackgroundService
         await _semaphore.WaitAsync();
         try
         {
-            var fromMailAddress = new MailAddress("henrygao00@gmail.com", "tiger");
+            var fromMailAddress = new MailAddress("dependsonthesmtp@gmail.com", "tiger"); // some smtp overrides this but gmail is chill
             var toMailAddress = new MailAddress(to);
             var mailMessage = new MailMessage(fromMailAddress, toMailAddress)
             {
