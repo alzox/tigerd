@@ -1,4 +1,3 @@
-cd C:\Users\YourUsername\Documents\iger-daemon\tiger
 dotnet build
 dotnet publish -c Release -o ./publish
 sc create "TigerService" binPath= "C:\Users\commo\OneDrive - University of Virginia\School\STEM\CS\Coding Projects 2024\tiger-daemon\tiger\publish\tiger.exe"

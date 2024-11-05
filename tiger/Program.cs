@@ -68,6 +68,9 @@ try
     }
 
     IHost host = hostBuilder.Build();
+    string tiger_ascii = File.ReadAllText(tigerPath + "tiger-ascii.txt");
+    Log.Information(tiger_ascii);
+    Log.Information("tiger-daemon initialized");
     host.Run();
 }
 catch (Exception ex)

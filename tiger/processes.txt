@@ -1,1 +1,3 @@
-chromium
+Riot Client,
+BlazblueEntropyEffect,
+Discord
