@@ -34,9 +34,16 @@ https://github.com/You-Gao/tiger-daemon.git
 
 3. edit processes.txt
 4. dotnet build
-5. dotnet run
+5. dotnet run (-- chaotic)
 
 x. There are online guides to integrate with SCM or systemd
+
+## To-do
+* Add an animation tiger?
+* Make logo
+* Clean code
+* Write tests
+* Add more message flags
 
 ## License
 This project is licensed under the [Creative Commons CC0 1.0 Universal License](https://creativecommons.org/publicdomain/zero/1.0/). See the [LICENSE](LICENSE) file for more details.
