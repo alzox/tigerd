@@ -1,4 +1,9 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Hosting.WindowsServices;
+using System.Runtime.InteropServices;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Systemd;
+
 namespace tiger.helpers
 
 {
@@ -11,7 +16,15 @@ namespace tiger.helpers
             _logger = logger;
             string contextPath = AppContext.BaseDirectory;
             int index = contextPath.IndexOf("tiger\\");
-            string tigerPath = contextPath.Substring(0, index + 6);
+
+	    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+		index = contextPath.IndexOf("tiger\\");
+	    }
+	    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)){
+		index = contextPath.IndexOf("tiger/");
+	    }
+
+	    string tigerPath = contextPath.Substring(0, index + 6);
             string processTxt = tigerPath + "processes.txt";
             string[] lines = File.ReadAllLines(processTxt);
             foreach (string line in lines)

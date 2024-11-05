@@ -3,6 +3,8 @@ using tiger;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Systemd;
 
 // Some Logic to change paths depending on the OS 
 string writeToLocation = "";
@@ -11,11 +13,11 @@ int index = contextPath.IndexOf("tiger\\");
  
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
 	writeToLocation = "C:/ProgramData/tiger-daemon/logs.txt";
-	int index = contextPath.IndexOf("tiger\\");
+	index = contextPath.IndexOf("tiger\\");
 }
-else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux){
+else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)){
 	writeToLocation = "/var/log/tiger-daemon/logs.txt";
-	int index = contextPath.IndexOf("tiger/");
+	index = contextPath.IndexOf("tiger/");
 }
 
 string tigerPath = contextPath.Substring(0, index + 6);
@@ -46,7 +48,7 @@ try
     smtpClient.EnableSsl = true;
 
     // "App" builder
-    IHostBuilder hostBuidler = Host.CreateDefaultBuilder(args)
+    IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
         .UseSerilog() // Add this line to use Serilog
         .ConfigureServices(services =>
         {
@@ -65,7 +67,7 @@ try
         Log.Information("Running as Linux Daemon");
     }
 
-    IHost host = host.Build();
+    IHost host = hostBuilder.Build();
     host.Run();
 }
 catch (Exception ex)
