@@ -58,7 +58,6 @@ namespace tiger.helpers
         }
 
         public void Update(){
-            PrintDict();
             foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
             {
                 string processName = entry.Key;
@@ -87,6 +86,7 @@ namespace tiger.helpers
                     processesDict[processName] = curTimeElapsed;
                 }
             }
+            PrintDict();
         }
 
         public void PrintDict()
