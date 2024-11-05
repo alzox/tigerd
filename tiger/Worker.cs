@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace tiger;
 
 public class Worker : BackgroundService
