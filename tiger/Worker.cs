@@ -51,11 +51,11 @@ public class Worker : BackgroundService
             }
         }
     }
-    private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+    private static readonly object _lock = new object();
 
-    public async void SendEmail(string subject, string body, string to)
+    public void SendEmail(string subject, string body, string to)
     {
-        await _semaphore.WaitAsync();
+        lock (_lock)
         try
         {
             var fromMailAddress = new MailAddress("dependsonthesmtp@gmail.com", "tiger"); // some smtp overrides this but gmail is chill
@@ -65,7 +65,7 @@ public class Worker : BackgroundService
                 Subject = subject,
                 Body = body
             };
-            await _smtpClient.SendMailAsync(mailMessage);
+            _smtpClient.Send(mailMessage);
         }
         catch (Exception ex)
         {
@@ -73,7 +73,8 @@ public class Worker : BackgroundService
         }
         finally
         {
-            _semaphore.Release();
+            _smtpClient.Dispose();
+            
         }
     }
 }
