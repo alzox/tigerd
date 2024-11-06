@@ -18,31 +18,16 @@ try
 {
     Log.Information("Starting up");
 
-    // SMTP settings
-   var configuration = new ConfigurationBuilder()
-    .SetBasePath(tigerPath)
-    .AddJsonFile("config", optional: false, reloadOnChange: true)
-    .Build();
-    IConfigurationSection smtpSettings = configuration.GetSection("SmtpSettings");
-    string smtpServer = smtpSettings["Server"];
-    int smtpPort = int.Parse(smtpSettings["Port"]);
-    string smtpEmail = smtpSettings["Email"];
-    string smtpPassword = smtpSettings["Password"];
-    SmtpClient smtpClient = new SmtpClient(smtpServer, smtpPort);
-    smtpClient.Credentials = new System.Net.NetworkCredential(smtpEmail, smtpPassword);
-    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-    smtpClient.EnableSsl = true;
-
     // "App" builder
     IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
         .UseSerilog() // Add this line to use Serilog
         .ConfigureServices(services =>
         {
-            services.AddSingleton(smtpClient);
-	    services.AddSingleton(args);
+    	    services.AddSingleton(args);
             services.AddHostedService<Worker>();
         });
 
+    // Check OS
     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
         hostBuilder = hostBuilder.UseWindowsService();

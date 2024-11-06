@@ -1,3 +1,7 @@
 Riot Client,
 BlazblueEntropyEffect,
-Discord
+Discord,
+Valorant,
+League of Legends,
+RiotClientServices,
+RiotClientUx

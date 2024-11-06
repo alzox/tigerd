@@ -7,13 +7,11 @@ namespace tiger;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly SmtpClient _smtpClient;
     private readonly string[] _args;
 
-    public Worker(ILogger<Worker> logger, SmtpClient smtpClient, string[] args)
+    public Worker(ILogger<Worker> logger, string[] args)
     {
         _logger = logger;
-        _smtpClient = smtpClient;
 	    _args = args;
     }
 
@@ -45,36 +43,32 @@ public class Worker : BackgroundService
             if (timeElapsed.TotalMinutes > 30)
             {
                 string subject = "wee woo wee woo";
-		string body = "hey, get off " + processName;
+                string body = "hey, get off " + processName;
                 string to = "djx3rn@virginia.edu";
                 SendEmail(subject, body, to);
             }
         }
     }
-    private static readonly object _lock = new object();
 
     public void SendEmail(string subject, string body, string to)
-    {
-        lock (_lock)
-        try
+    {   
+        using (var smtpClient = new SMTPHelper().GetSmtpClient())
+        using (var mailMessage = new MailMessage())
         {
             var fromMailAddress = new MailAddress("dependsonthesmtp@gmail.com", "tiger"); // some smtp overrides this but gmail is chill
             var toMailAddress = new MailAddress(to);
-            var mailMessage = new MailMessage(fromMailAddress, toMailAddress)
-            {
-                Subject = subject,
-                Body = body
-            };
-            _smtpClient.Send(mailMessage);
+            mailMessage.From = fromMailAddress;
+            mailMessage.To.Add(toMailAddress);
+            mailMessage.Subject = subject;
+            mailMessage.Body = body;
+        try
+        {   
+            smtpClient.Send(mailMessage);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending email.");
         }
-        finally
-        {
-            _smtpClient.Dispose();
-            
-        }
+    }
     }
 }
