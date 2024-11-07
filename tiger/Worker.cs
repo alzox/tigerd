@@ -61,10 +61,10 @@ public class Worker : BackgroundService
         {
             string processName = entry.Key;
             TimeSpan timeElapsed = entry.Value;
-            if (timeElapsed.TotalMinutes > 60)
+            if (timeElapsed.TotalMinutes > 30)
             {
-                string subject = "good job";
-                string body = "keep up the good work on " + processName;
+                string subject = "remember to take a break!";
+                string body = "take a break from " + processName;
                 string to = "djx3rn@virginia.edu";
                 SendEmail(subject, body, to);
             }
