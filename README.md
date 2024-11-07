@@ -32,7 +32,7 @@ https://github.com/You-Gao/tiger-daemon.git
 
 ```
 
-3. edit processes.txt
+3. edit processes.txt and goodprocesses.txt
 4. dotnet build
 5. dotnet run (-- chaotic)
 

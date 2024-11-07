@@ -1,5 +1,5 @@
 dotnet build
 dotnet publish -c Release -o ./publish
-sc create "TigerService" binPath= "C:\Users\commo\OneDrive - University of Virginia\School\STEM\CS\Coding Projects 2024\tiger-daemon\tiger\publish\tiger.exe"
+sc create "TigerService" binPath= "C:\Users\commo\OneDrive - University of Virginia\School\STEM\CS\Coding Projects 2024\tiger-daemon\tiger\publish\tiger.exe" start=auto
 sc start TigerService
 sc query TigerService

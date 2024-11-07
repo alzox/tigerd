@@ -20,8 +20,11 @@ public class Worker : BackgroundService
 	foreach (string arg in _args){
 		_logger.LogInformation(arg);
 	}
-        ProccessDict proccessDict = new ProccessDict(_logger);
+        ProccessDict proccessDict = new ProccessDict(_logger, "processes.txt");
         proccessDict.Initialize();
+
+        ProccessDict goodProccessDict = new ProccessDict(_logger, "goodProcesses.txt");
+        goodProccessDict.Initialize();
 
 	if (_args.Length > 0) {
 		MessageJson messages = new MessageJson(_logger, _args[0]);
@@ -29,12 +32,14 @@ public class Worker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             proccessDict.Update();
-            CheckProcessesPlaytime(proccessDict.GetDict());
+            goodProccessDict.Update();
+            CheckBadProcessesPlaytime(proccessDict.GetDict());
+            CheckGoodProcessesPlaytime(goodProccessDict.GetDict());
             await Task.Delay(900000, stoppingToken);
         }
     }
 
-    public void CheckProcessesPlaytime(Dictionary<string, TimeSpan> processesDict)
+    public void CheckBadProcessesPlaytime(Dictionary<string, TimeSpan> processesDict)
     {
         foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
         {
@@ -50,7 +55,27 @@ public class Worker : BackgroundService
         }
     }
 
+    public void CheckGoodProcessesPlaytime(Dictionary<string, TimeSpan> processesDict)
+    {
+        foreach (KeyValuePair<string, TimeSpan> entry in processesDict)
+        {
+            string processName = entry.Key;
+            TimeSpan timeElapsed = entry.Value;
+            if (timeElapsed.TotalMinutes > 60)
+            {
+                string subject = "good job";
+                string body = "keep up the good work on " + processName;
+                string to = "djx3rn@virginia.edu";
+                SendEmail(subject, body, to);
+            }
+        }
+    }
+
+    private static readonly object emailLock = new object();
+    
     public void SendEmail(string subject, string body, string to)
+    {
+        lock (emailLock)
     {   
         using (var smtpClient = new SMTPHelper().GetSmtpClient())
         using (var mailMessage = new MailMessage())
@@ -68,6 +93,7 @@ public class Worker : BackgroundService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending email.");
+        }
         }
     }
     }

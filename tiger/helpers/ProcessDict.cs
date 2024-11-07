@@ -11,11 +11,11 @@ namespace tiger.helpers
     {
         public Dictionary<string, TimeSpan> processesDict = new Dictionary<string, TimeSpan>();
         private readonly ILogger _logger;
-        public ProccessDict(ILogger logger)
+        public ProccessDict(ILogger logger, string fileName)
         {
             _logger = logger;
 	        string tigerPath = PlatformConfig.GetTigerPath();
-            string processTxt = tigerPath + "processes.txt";
+            string processTxt = tigerPath + fileName;
             string[] lines = File.ReadAllLines(processTxt);
             foreach (string line in lines)
             {
