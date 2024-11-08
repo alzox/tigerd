@@ -4,4 +4,5 @@ Discord,
 Valorant,
 League of Legends,
 RiotClientServices,
-RiotClientUx
+RiotClientUx,
+Roblox
