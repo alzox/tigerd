@@ -41,9 +41,9 @@ x. There are online guides to integrate with SCM or systemd
 ## To-do
 * Add an animation tiger?
 * Make logo
-* Clean code
 * Write tests
 * Add more message flags
+* Add flags for time elapsed
 
 ## License
 This project is licensed under the [Creative Commons CC0 1.0 Universal License](https://creativecommons.org/publicdomain/zero/1.0/). See the [LICENSE](LICENSE) file for more details.
