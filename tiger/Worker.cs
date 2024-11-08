@@ -23,7 +23,7 @@ public class Worker : BackgroundService
         ProccessDict proccessDict = new ProccessDict(_logger, "processes.txt");
         proccessDict.Initialize();
 
-        ProccessDict goodProccessDict = new ProccessDict(_logger, "goodProcesses.txt");
+        ProccessDict goodProccessDict = new ProccessDict(_logger, "goodprocesses.txt");
         goodProccessDict.Initialize();
 
 	if (_args.Length > 0) {
