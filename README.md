@@ -13,7 +13,7 @@ I got an internship this summer so I wanted to understand the C# system and what
 
 1. Clone the repository:
 ```
-https://github.com/You-Gao/tiger-daemon.git
+git clone https://github.com/You-Gao/tiger-daemon.git
 ```
 
 ## Usage
