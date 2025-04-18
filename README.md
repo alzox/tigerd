@@ -1,4 +1,4 @@
-## tiger-daemon
+## tigerd
 
 I got an internship this summer, so I wanted to get a feel for C# and what better way to do it than writing a daemon (*I really wanted to write a daemon*). Microsoft has written most of it for you; they give you configurable factories and have already created their own opinionated frameworks, plus interfaces with respective OS systems. In my case, I used the Worker blueprint to create a daemon that can be integrated with systemd or Windows SCM. It has **SMTP** capability as well, which is the most fun part of it 
 
